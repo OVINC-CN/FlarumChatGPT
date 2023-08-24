@@ -34,11 +34,16 @@ class Chat:
             self.record_log(post=post, reply=reply, is_success=is_success)
 
     def call_api(self, messages: List[Dict[str, str]]) -> (bool, OpenAIObject):
-        try:
-            return True, openai.ChatCompletion.create(model=settings.OPENAI_DEFAULT_MODEL, messages=messages)
-        except Exception as err:
-            logger.exception("[CallOpenAIFailed] %s", err)
-            return False, self.create_error_reply(gettext("OpenAI Error"))
+        error = None
+        retry_times = 0
+        while retry_times < settings.OPENAI_MAX_RETRY_TIME:
+            retry_times += 1
+            try:
+                return True, openai.ChatCompletion.create(model=settings.OPENAI_DEFAULT_MODEL, messages=messages)
+            except Exception as err:
+                error = err
+        logger.exception("[CallOpenAIFailed] %s", error)
+        return False, self.create_error_reply(gettext("OpenAI Error"))
 
     def create_error_reply(self, error_msg: str = None) -> OpenAIObject:
         reply = OpenAIObject()

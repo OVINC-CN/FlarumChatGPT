@@ -191,6 +191,7 @@ OVINC_API_DOMAIN = getenv_or_raise("OVINC_API_DOMAIN")
 OPENAI_API_KEY = getenv_or_raise("OPENAI_API_KEY")
 OPENAI_API_BASE = getenv_or_raise("OPENAI_API_BASE")
 OPENAI_DEFAULT_MODEL = getenv_or_raise("OPENAI_DEFAULT_MODEL")
+OPENAI_MAX_RETRY_TIME = int(os.getenv("OPENAI_MAX_RETRY_TIME", 3))
 
 # Flarum
 FLARUM_USER_ID = getenv_or_raise("FLARUM_USER_ID")
