@@ -17,5 +17,5 @@ class Command(BaseCommand):
     def add_arguments(self, parser):
         parser.add_argument("worker", nargs="*")
         parser.add_argument("beat", nargs="*")
+        parser.add_argument("-c", nargs="*")
         parser.add_argument("-l")
-        parser.add_argument("-f")
