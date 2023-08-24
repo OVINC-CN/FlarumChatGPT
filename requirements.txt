@@ -1,5 +1,5 @@
 # Django
-django==4.2.1
+django==4.2.3
 django_environ==0.10.0
 mysqlclient==2.0.3
 djangorestframework==3.14.0
