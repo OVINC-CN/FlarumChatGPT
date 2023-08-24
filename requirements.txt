@@ -25,6 +25,7 @@ arrow==1.2.3
 protobuf==3.19.5
 opentelemetry-api==1.19.0
 opentelemetry-sdk==1.19.0
+opentelemetry-exporter-otlp==1.19.0
 opentelemetry-exporter-jaeger==1.19.0
 opentelemetry-instrumentation==0.40b0
 opentelemetry-instrumentation-django==0.40b0
