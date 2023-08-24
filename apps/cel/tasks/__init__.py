@@ -1,2 +1,2 @@
-from apps.cel.tasks.chatgpt import *
-from apps.cel.tasks.debug import *
+from apps.cel.tasks.chatgpt import *  # noqa
+from apps.cel.tasks.debug import *  # noqa
