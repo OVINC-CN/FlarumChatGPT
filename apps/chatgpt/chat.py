@@ -29,7 +29,7 @@ class Chat:
                 is_success, reply = self.call_api(messages=[{"role": "user", "content": message}])
             else:
                 is_success = False
-                reply = self.create_error_reply()
+                reply = self.create_error_reply(gettext("Empty Content"))
             self.create_post(post=post, included=posts["included"], reply=reply)
             self.record_log(post=post, reply=reply, is_success=is_success)
 
@@ -38,13 +38,13 @@ class Chat:
             return True, openai.ChatCompletion.create(model=settings.OPENAI_DEFAULT_MODEL, messages=messages)
         except Exception as err:
             logger.exception("[CallOpenAIFailed] %s", err)
-            return False, self.create_error_reply()
+            return False, self.create_error_reply(gettext("OpenAI Error"))
 
-    def create_error_reply(self) -> OpenAIObject:
+    def create_error_reply(self, error_msg: str = None) -> OpenAIObject:
         reply = OpenAIObject()
         choice = OpenAIObject()
         message = OpenAIObject()
-        setattr(message, "content", gettext("OpenAI Error"))
+        setattr(message, "content", error_msg or gettext("Unknown Error"))
         setattr(choice, "message", message)
         setattr(reply, "choices", [choice])
         return reply
@@ -81,7 +81,7 @@ class Chat:
         return resp
 
     def parse_user_content(self, post: dict) -> str:
-        return post["attributes"].get("content", "")
+        return post["attributes"]["content"]
 
     def record_log(self, post: dict, reply: OpenAIObject = None, is_success: bool = True) -> None:
         usage = getattr(reply, "usage", OpenAIObject())
@@ -113,8 +113,9 @@ class Chat:
             }
         }
         try:
-            status_code = self.web.post(f"{settings.FLARUM_API_URL}/posts", json=data).status_code
-            return 200 <= status_code < 300
+            resp = self.web.post(f"{settings.FLARUM_API_URL}/posts", json=data)
+            logger.info("[CreatePostFinished] %s", resp.content)
+            return 200 <= resp.status_code < 300
         except Exception as err:
             logger.exception("[CreatePostFailed] %s", err)
             return False
