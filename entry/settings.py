@@ -181,6 +181,8 @@ ENABLE_TRACE = strtobool(os.getenv("ENABLE_TRACE", "True"))
 JAEGER_HOST = os.getenv("JAEGER_HOST", "localhost")
 JAEGER_PORT = int(os.getenv("JAEGER_PORT", "6831"))
 SERVICE_NAME = os.getenv("SERVICE_NAME", APP_CODE)
+OTLP_HOST = os.getenv("OTLP_HOST", "")
+OTLP_TOKEN = os.getenv("OTLP_TOKEN", "")
 
 # OVINC
 OVINC_API_DOMAIN = getenv_or_raise("OVINC_API_DOMAIN")

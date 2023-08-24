@@ -2,8 +2,10 @@ from django.conf import settings
 from django.utils.log import configure_logging
 from opentelemetry import trace
 from opentelemetry.exporter.jaeger.thrift import JaegerExporter
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
 from opentelemetry.sdk.resources import SERVICE_NAME, Resource
 from opentelemetry.sdk.trace import TracerProvider
+from opentelemetry.sdk.trace.sampling import ALWAYS_ON
 
 from apps.trace.exporters import LazyBatchSpanProcessor
 from apps.trace.instrumentors import Instrumentor
@@ -25,11 +27,21 @@ class TraceHandler:
         # use command below to change udp max dgram
         # sudo sysctl -w net.inet.udp.maxdgram=65535
         service_name = ServiceNameHandler(settings.SERVICE_NAME).get_service_name()
-        trace.set_tracer_provider(TracerProvider(resource=Resource.create({SERVICE_NAME: service_name})))
-        jaeger_exporter = JaegerExporter(
-            agent_host_name=settings.JAEGER_HOST, agent_port=settings.JAEGER_PORT, udp_split_oversized_batches=True
+        trace.set_tracer_provider(
+            TracerProvider(
+                resource=Resource.create({SERVICE_NAME: service_name, "token": settings.OTLP_TOKEN}),
+                sampler=ALWAYS_ON,
+            )
         )
-        trace.get_tracer_provider().add_span_processor(LazyBatchSpanProcessor(jaeger_exporter))
+        # otlp
+        if settings.OTLP_HOST:
+            exporter = OTLPSpanExporter(endpoint=settings.OTLP_HOST)
+        # jaeger
+        else:
+            exporter = JaegerExporter(
+                agent_host_name=settings.JAEGER_HOST, agent_port=settings.JAEGER_PORT, udp_split_oversized_batches=True
+            )
+        trace.get_tracer_provider().add_span_processor(LazyBatchSpanProcessor(exporter))
         Instrumentor().instrument()
         trace_format = (
             "[trace_id]: %(otelTraceID)s [span_id]: %(otelSpanID)s [resource.service.name]: %(otelServiceName)s"
