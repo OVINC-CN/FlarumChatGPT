@@ -10,7 +10,7 @@ from core.utils import getenv_or_raise, strtobool
 BASE_DIR = Path(__file__).resolve().parent.parent
 
 # Env
-environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
 # DEBUG
 DEBUG = strtobool(os.getenv("DEBUG", "False"))
@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     "sslserver",
     "apps.account",
     "apps.cel",
+    "apps.chatgpt",
     "apps.home",
     "apps.trace",
 ]
@@ -183,3 +184,14 @@ SERVICE_NAME = os.getenv("SERVICE_NAME", APP_CODE)
 
 # OVINC
 OVINC_API_DOMAIN = getenv_or_raise("OVINC_API_DOMAIN")
+
+# Open AI
+OPENAI_API_KEY = getenv_or_raise("OPENAI_API_KEY")
+OPENAI_API_BASE = getenv_or_raise("OPENAI_API_BASE")
+OPENAI_DEFAULT_MODEL = getenv_or_raise("OPENAI_DEFAULT_MODEL")
+
+# Flarum
+FLARUM_USER_ID = getenv_or_raise("FLARUM_USER_ID")
+FLARUM_USER_API_TOKEN = getenv_or_raise("FLARUM_USER_API_TOKEN")
+FLARUM_API_URL = getenv_or_raise("FLARUM_API_URL")
+FLARUM_REPLY_MAX_SIZE = os.getenv("FLARUM_REPLY_MAX_SIZE", "1000")

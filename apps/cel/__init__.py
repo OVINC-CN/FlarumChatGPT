@@ -18,4 +18,9 @@ app.conf.beat_schedule = {
         "schedule": crontab(minute="*"),
         "args": (),
     },
+    "chatgpt_reply": {
+        "task": "apps.cel.tasks.chatgpt.chat",
+        "schedule": crontab(minute="*"),
+        "args": (),
+    },
 }
